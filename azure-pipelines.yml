@@ -23,7 +23,7 @@ stages:
             provider: 'azurerm'
             command: 'init'
             workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preproad'
-            backendServiceArm: 'guthii-svc'
+            backendServiceArm: 'axion-svc'
             backendAzureRmStorageAccountName: 'infrastatestorage1407'
             backendAzureRmContainerName: 'tfstate'
             backendAzureRmKey: 'preproad.tfstate'
