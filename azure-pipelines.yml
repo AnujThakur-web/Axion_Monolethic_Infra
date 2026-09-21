@@ -1,0 +1,43 @@
+trigger:
+- main 
+
+pool:
+  micro-pool
+
+stages: 
+  - stage: TerraformInitValidate
+    displayName: Terraform Init & Validate
+    jobs:
+      - job: Init and Validate
+        displayName: Terraform Init or Validate
+        steps:
+        - task: TerraformInstaller@1
+          displayName: Terraform Install
+          inputs:
+            terraformVersion: 'latest'
+          
+
+        - task: TerraformTask@5
+          displayName: Terraform init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preproad'
+            backendServiceArm: 'anuj-svc'
+            backendAzureRmStorageAccountName: 'infrastatestorage1407'
+            backendAzureRmContainerName: 'tfstate'
+            backendAzureRmKey: 'preproad.tfstate'
+
+        - task: TerraformTask@5
+          displayName: Terraform Validate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preproad'''
+
+
+        
+
+
+  
+
