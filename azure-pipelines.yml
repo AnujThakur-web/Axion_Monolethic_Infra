@@ -1,43 +1,45 @@
 trigger:
-- main 
+- main
 
 pool:
-  micro-pool
+  name: micro-pool
 
-stages: 
-  - stage: TerraformInitValidate
-    displayName: Terraform Init & Validate
-    jobs:
-      - job: InitandValidate
-        displayName: Terraform Init or Validate
-        steps:
-        - task: TerraformInstaller@1
-          displayName: Terraform Install
-          inputs:
-            terraformVersion: '1.16.3'
-          
+stages:
+- stage: TerraformInitValidate
+  displayName: Terraform Init & Validate
 
-        - task: TerraformTask@5
-          displayName: Terraform init
-          inputs:
-            provider: 'azurerm'
-            command: 'init'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preproad'
-            backendServiceArm: 'axion-svc'
-            backendAzureRmStorageAccountName: 'infrastatestorage1407'
-            backendAzureRmContainerName: 'tfstate'
-            backendAzureRmKey: 'preproad.tfstate'
+  jobs:
+  - job: InitandValidate
+    displayName: Terraform Init and Validate
 
-        - task: TerraformTask@5
-          displayName: Terraform Validate
-          inputs:
-            provider: 'azurerm'
-            command: 'validate'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preproad'''
+    steps:
 
+    # Install Terraform
+    - task: TerraformInstaller@1
+      displayName: Terraform Install
+      inputs:
+        terraformVersion: '1.16.3'
 
-        
+    # Check Terraform installation
+    - script: |
+        terraform version
+        where terraform
+      displayName: Verify Terraform Installation
 
+    # Terraform Init
+    - task: TerraformTask@5
+      displayName: Terraform Init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preproad'
+        backendServiceArm: 'axion-svc'
+        backendAzureRmStorageAccountName: 'infratastorage1407'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'preproad.tfstate'
 
-  
-
+    # Terraform Validate
+    - script: |
+        terraform validate
+      displayName: Terraform Validate
+      workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preproad'
