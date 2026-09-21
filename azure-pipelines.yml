@@ -8,7 +8,7 @@ stages:
   - stage: TerraformInitValidate
     displayName: Terraform Init & Validate
     jobs:
-      - job: Init and Validate
+      - job: InitandValidate
         displayName: Terraform Init or Validate
         steps:
         - task: TerraformInstaller@1
