@@ -13,33 +13,12 @@ stages:
     displayName: Terraform Init and Validate
 
     steps:
-
-    # Install Terraform
-    - task: TerraformInstaller@1
-      displayName: Terraform Install
-      inputs:
-        terraformVersion: '1.16.3'
-
-    # Check Terraform installation
-    - script: |
-        terraform version
-        where terraform
-      displayName: Verify Terraform Installation
-
-    # Terraform Init
     - task: TerraformTask@5
-      displayName: Terraform Init
       inputs:
         provider: 'azurerm'
         command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preproad'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/Enviroment /Preproad/'
         backendServiceArm: 'axion-svc'
-        backendAzureRmStorageAccountName: 'infratastorage1407'
+        backendAzureRmStorageAccountName: 'infrastatestorage1407'
         backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: 'preproad.tfstate'
-
-    # Terraform Validate
-    - script: |
-        terraform validate
-      displayName: Terraform Validate
-      workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preproad'
+        backendAzureRmKey: 'preproad-tfstate'
