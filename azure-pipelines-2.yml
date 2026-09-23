@@ -12,22 +12,18 @@ steps:
     terraformVersion: '1.16.4'
 
 - powershell: |
-    Write-Host "=== WHO AM I ==="
-    whoami
-
-    Write-Host "=== TERRAFORM ==="
-    Test-Path "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe"
-    & "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe" version
-
-    Write-Host "=== REPO ==="
+    Write-Host "=== REPO ROOT ==="
     Write-Host "$(System.DefaultWorkingDirectory)"
 
-    Write-Host "=== PREPROD ==="
-    Test-Path "$(System.DefaultWorkingDirectory)\Environment\Preprod"
+    Write-Host "=== ROOT FOLDERS ==="
+    Get-ChildItem "$(System.DefaultWorkingDirectory)" -Directory | Select-Object Name, FullName
 
-    Write-Host "=== TF FILES ==="
-    Get-ChildItem "$(System.DefaultWorkingDirectory)\Environment\Preprod" -Filter "*.tf"
-  displayName: Diagnose
+    Write-Host "=== ALL TERRAFORM FILES ==="
+    Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse -Filter "*.tf" | Select-Object FullName
+
+    Write-Host "=== ALL DIRECTORIES ==="
+    Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse -Directory | Select-Object FullName
+  displayName: 'Find Terraform Files'
 
 - task: TerraformTask@5
   displayName: Terraform Init
