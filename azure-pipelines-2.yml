@@ -32,5 +32,6 @@ stages:
           inputs:
             provider: 'azurerm'
             command: 'apply'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preproad'
             environmentServiceNameAzureRM: 'axion-svc'
           
