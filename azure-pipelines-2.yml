@@ -1,0 +1,31 @@
+trigger:
+- main
+
+pool:
+  micro-agent
+
+stages:
+  - stage: TerraforminitValidate
+    displayName: Terraform Init and Validate
+    jobs:
+      - job: InitValidate
+        displayName: Initjob
+        steps:
+        - task: TerraformTask@5
+          displayName: Terraform Init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/Enveroment/Preproad'
+            backendServiceArm: 'axion-svc'
+            backendAzureRmStorageAccountName: 'stgdev2025'
+            backendAzureRmContainerName: 'tfstate'
+            backendAzureRmKey: 'preprod.tfstate'
+
+        - task: TerraformTask@5
+          displayName: Terraform Validate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/Enveroment/Preproad'''
+          
