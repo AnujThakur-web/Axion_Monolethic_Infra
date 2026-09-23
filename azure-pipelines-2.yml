@@ -16,7 +16,6 @@ stages:
           inputs:
             provider: 'azurerm'
             command: 'init'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/Enveroment/Preproad'
             backendServiceArm: 'axion-svc'
             backendAzureRmStorageAccountName: 'stgdev2025'
             backendAzureRmContainerName: 'tfstate'
