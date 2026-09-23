@@ -11,19 +11,18 @@ steps:
   inputs:
     terraformVersion: '1.16.4'
 
+
 - powershell: |
     Write-Host "=== REPO ROOT ==="
     Write-Host "$(System.DefaultWorkingDirectory)"
 
-    Write-Host "=== ROOT FOLDERS ==="
-    Get-ChildItem "$(System.DefaultWorkingDirectory)" -Directory | Select-Object Name, FullName
-
-    Write-Host "=== ALL TERRAFORM FILES ==="
-    Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse -Filter "*.tf" | Select-Object FullName
-
-    Write-Host "=== ALL DIRECTORIES ==="
+    Write-Host "=== ALL FOLDERS ==="
     Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse -Directory | Select-Object FullName
-  displayName: 'Find Terraform Files'
+
+    Write-Host "=== ALL TF FILES ==="
+    Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse -Filter "*.tf" | Select-Object FullName
+  displayName: 'Find Terraform Folder'
+
 
 - task: TerraformTask@5
   displayName: Terraform Init
