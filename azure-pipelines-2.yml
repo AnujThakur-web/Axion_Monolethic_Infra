@@ -1,73 +1,40 @@
-trigger:
-- main
+steps:
 
-pool:
-  name: micro-agent
+- task: TerraformInstaller@1
+  displayName: Install Terraform
+  inputs:
+    terraformVersion: '1.16.4'
 
-stages:
-- stage: TerraformInitValidate
-  displayName: Terraform Init and Validate
+- powershell: |
+    Write-Host "=== Agent identity ==="
+    whoami
 
-  jobs:
-  - job: InitValidate
-    displayName: Init Job
+    Write-Host "=== Current directory ==="
+    Get-Location
 
-    steps:
-    - task: PowerShell@2
-      displayName: diagnos
-      inputs:
-        targetType: 'inline'
-        script: |
-          - powershell: |
-              Write-Host "=== Agent identity ==="
-              whoami
-          
-              Write-Host "=== Current directory ==="
-              Get-Location
-          
-              Write-Host "=== Terraform exists ==="
-              Test-Path "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe"
-          
-              Write-Host "=== Terraform version ==="
-              & "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe" version
-          
-              Write-Host "=== Repo path ==="
-              Write-Host "$(System.DefaultWorkingDirectory)"
-          
-              Write-Host "=== Preprod path exists ==="
-              Test-Path "$(System.DefaultWorkingDirectory)\Environment\Preprod"
-          
-              Write-Host "=== Terraform files ==="
-              Get-ChildItem "$(System.DefaultWorkingDirectory)\Environment\Preprod" -Filter "*.tf"
-            displayName: 'Diagnose Terraform Agent'
+    Write-Host "=== Terraform exists ==="
+    Test-Path "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe"
 
-    - task: TerraformInstaller@1
-      displayName: Install Terraform
-      inputs:
-        terraformVersion: 'latest'
+    Write-Host "=== Terraform version ==="
+    & "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe" version
 
-    - task: TerraformTask@5
-      displayName: Terraform Init
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Preprod'
-        backendServiceArm: 'axion-svc'
-        backendAzureRmStorageAccountName: 'stgdev2025'
-        backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: 'preprod.tfstate'
+    Write-Host "=== Repo path ==="
+    Write-Host "$(System.DefaultWorkingDirectory)"
 
-    - task: TerraformTask@5
-      displayName: Terraform Validate
-      inputs:
-        provider: 'azurerm'
-        command: 'validate'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Preprod'
+    Write-Host "=== Preprod path exists ==="
+    Test-Path "$(System.DefaultWorkingDirectory)\Environment\Preprod"
 
-    - task: TerraformTask@5
-      displayName: Terraform Apply
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Preprod'
-        environmentServiceNameAzureRM: 'axion-svc'
+    Write-Host "=== Terraform files ==="
+    Get-ChildItem "$(System.DefaultWorkingDirectory)\Environment\Preprod" -Filter "*.tf"
+  displayName: 'Diagnose Terraform Agent'
+
+- task: TerraformTask@5
+  displayName: Terraform Init
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Preprod'
+    backendServiceArm: 'axion-svc'
+    backendAzureRmStorageAccountName: 'stgdev2025'
+    backendAzureRmContainerName: 'tfstate'
+    backendAzureRmKey: 'preprod.tfstate'
