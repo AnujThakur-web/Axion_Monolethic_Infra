@@ -26,4 +26,11 @@ stages:
           inputs:
             provider: 'azurerm'
             command: 'validate'
+
+        - task: TerraformTask@5
+          displayName: Terraform apply
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            environmentServiceNameAzureRM: 'axion-svc'
           
