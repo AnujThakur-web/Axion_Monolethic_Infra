@@ -11,26 +11,42 @@ steps:
   inputs:
     terraformVersion: '1.16.4'
 
+- powershell: |
+    $ErrorActionPreference = "Stop"
+
+    $tf = "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe"
+
+    Write-Host "Terraform: $tf"
+
+    if (!(Test-Path $tf)) {
+        throw "Terraform executable not found: $tf"
+    }
+
+    & $tf version
+
+    Write-Host "Repo: $(System.DefaultWorkingDirectory)"
+
+    Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse -Filter "*.tf" |
+        Select-Object FullName
+  displayName: 'Check Terraform'
 
 - powershell: |
-    Write-Host "=== REPO ROOT ==="
-    Write-Host "$(System.DefaultWorkingDirectory)"
+    $ErrorActionPreference = "Stop"
 
-    Write-Host "=== ALL FOLDERS ==="
-    Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse -Directory | Select-Object FullName
+    $tf = "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe"
 
-    Write-Host "=== ALL TF FILES ==="
-    Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse -Filter "*.tf" | Select-Object FullName
-  displayName: 'Find Terraform Folder'
+    Set-Location "$(System.DefaultWorkingDirectory)"
 
+    Write-Host "Current directory:"
+    Get-Location
 
-- task: TerraformTask@5
-  displayName: Terraform Init
-  inputs:
-    provider: 'azurerm'
-    command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/Environment/Preprod'
-    backendServiceArm: 'axion-svc'
-    backendAzureRmStorageAccountName: 'stgdev2025'
-    backendAzureRmContainerName: 'tfstate'
-    backendAzureRmKey: 'preprod.tfstate'
+    & $tf init `
+      -backend-config="storage_account_name=stgdev2025" `
+      -backend-config="container_name=tfstate" `
+      -backend-config="key=preprod.tfstate" `
+      -backend-config="use_azuread_auth=true"
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Terraform init failed"
+    }
+  displayName: 'Terraform Init'
