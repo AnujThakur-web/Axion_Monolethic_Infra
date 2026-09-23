@@ -1,3 +1,9 @@
+trigger:
+- main
+
+pool:
+  name: micro-agent
+
 steps:
 
 - task: TerraformInstaller@1
@@ -6,27 +12,22 @@ steps:
     terraformVersion: '1.16.4'
 
 - powershell: |
-    Write-Host "=== Agent identity ==="
+    Write-Host "=== WHO AM I ==="
     whoami
 
-    Write-Host "=== Current directory ==="
-    Get-Location
-
-    Write-Host "=== Terraform exists ==="
+    Write-Host "=== TERRAFORM ==="
     Test-Path "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe"
-
-    Write-Host "=== Terraform version ==="
     & "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe" version
 
-    Write-Host "=== Repo path ==="
+    Write-Host "=== REPO ==="
     Write-Host "$(System.DefaultWorkingDirectory)"
 
-    Write-Host "=== Preprod path exists ==="
+    Write-Host "=== PREPROD ==="
     Test-Path "$(System.DefaultWorkingDirectory)\Environment\Preprod"
 
-    Write-Host "=== Terraform files ==="
+    Write-Host "=== TF FILES ==="
     Get-ChildItem "$(System.DefaultWorkingDirectory)\Environment\Preprod" -Filter "*.tf"
-  displayName: 'Diagnose Terraform Agent'
+  displayName: Diagnose
 
 - task: TerraformTask@5
   displayName: Terraform Init
