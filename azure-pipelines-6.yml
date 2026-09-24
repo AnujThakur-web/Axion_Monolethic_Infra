@@ -1,0 +1,18 @@
+
+trigger:
+- main
+
+pool: micro-agent
+
+
+steps:
+- task: TerraformTask@5
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/envoriment/preprod'
+    backendServiceArm: 'Axion-SVC'
+    backendAzureRmStorageAccountName: 'infrastatestorage1407'
+    backendAzureRmContainerName: 'tfstate'
+    backendAzureRmKey: 'preprod.tfstate"'
+
