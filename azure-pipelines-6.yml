@@ -7,15 +7,18 @@ pool: micro-agent
 
 steps:
 - task: TerraformInstaller@1
+  displayName: 'Install Terraform'
   inputs:
     terraformVersion: 'latest'
+
 - task: TerraformTask@5
+  displayName: 'Terraform Init'
   inputs:
     provider: 'azurerm'
     command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/envoriment/preprod'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preprod'
     backendServiceArm: 'Axion-SVC'
     backendAzureRmStorageAccountName: 'infrastatestorage1407'
     backendAzureRmContainerName: 'tfstate'
-    backendAzureRmKey: 'preprod.tfstate"'
+    backendAzureRmKey: 'preprod.tfstate'
 
