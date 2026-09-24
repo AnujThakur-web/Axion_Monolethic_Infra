@@ -7,9 +7,9 @@ pool: micro-agent
 
 steps:
 - task: TerraformInstaller@1
-  displayName: 'Install Terraform'
+  displayName: Install Terraform
   inputs:
-    terraformVersion: 'latest'
+    terraformVersion: '1.16.4'
 
 - task: TerraformTask@5
   displayName: 'Terraform Init'
