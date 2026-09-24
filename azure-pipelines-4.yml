@@ -11,17 +11,12 @@ stages:
       - job: Infra_setup
         displayName: Terraform init and Validate
         steps:
-        - task: TerraformInstaller@1
-          displayName: Terraform install
-          inputs:
-            terraformVersion: 'latest'
-
         - task: TerraformTask@5
-          displayName: Terraform Init
+          displayName: init
           inputs:
             provider: 'azurerm'
             command: 'init'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/preprod'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/envoroment/preprod'
             backendServiceArm: 'Axion-SVC'
             backendAzureRmStorageAccountName: 'infrastatestorage1407'
             backendAzureRmContainerName: 'tfstate'
