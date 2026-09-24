@@ -5,10 +5,16 @@ terraform {
       version = "=5.0.0"
     }
   }
+
+  backend "azurerm" {
+    resource_group_name  = "infra-rg"
+    storage_account_name = "infrastatestorage1407"
+    container_name       = "tfstate"
+    key                  = "nic.tfstate"
+  }
+
+
 }
-
-
-
 
 provider "azurerm" {
   features {}
@@ -23,11 +29,6 @@ provider "azurerm" {
 
 
 
-  # backend "azurerm" {
-  #   resource_group_name  = "infra-rg"
-  #   storage_account_name = "infrastatestorage1407"
-  #   container_name       = "tfstate"
-  #   key                  = "nic.tfstate"
-  # }
+  
 
 
