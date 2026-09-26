@@ -1,0 +1,69 @@
+trigger:
+- main
+
+pool:
+  web-pool
+
+stages:
+  - stage: inititvalidate
+    jobs:
+      - job: initvalidate
+        steps:
+        - task: TerraformTask@5
+          displayName: init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/Preproad'
+            backendServiceArm: 'Axion-SVC'
+            backendAzureRmStorageAccountName: 'infrastatestorage1407'
+            backendAzureRmContainerName: 'tfstate'
+            backendAzureRmKey: 'preprod.tfstate'
+          
+
+        - task: TerraformTask@5
+          displayName: validate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/Preproad'
+
+
+        - task: TerraformTask@5
+          displayName: plan
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/Preproad'
+            environmentServiceNameAzureRM: 'Axion-SVC'
+
+  - stage: infra_deployment
+    jobs:
+      - job: deployment
+        steps: 
+        - task: TerraformTask@5
+          displayName: apply_init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/Preproad'
+            backendServiceArm: 'Axion-SVC'
+            backendAzureRmStorageAccountName: 'infrastatestorage1407'
+            backendAzureRmContainerName: 'tfstate'
+            backendAzureRmKey: 'preprod.tfstate'
+
+
+        - task: TerraformTask@5
+          displayName: Terraform_Apply
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/enviroment/Preproad'
+            environmentServiceNameAzureRM: 'Axion-SVC'
+            
+
+        
+        
+
+
+ 
