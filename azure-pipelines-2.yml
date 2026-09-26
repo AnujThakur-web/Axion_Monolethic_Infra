@@ -1,0 +1,52 @@
+trigger:
+- main
+
+pool:
+  name: micro-agent
+
+steps:
+
+- task: TerraformInstaller@1
+  displayName: Install Terraform
+  inputs:
+    terraformVersion: '1.16.4'
+
+- powershell: |
+    $ErrorActionPreference = "Stop"
+
+    $tf = "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe"
+
+    Write-Host "Terraform: $tf"
+
+    if (!(Test-Path $tf)) {
+        throw "Terraform executable not found: $tf"
+    }
+
+    & $tf version
+
+    Write-Host "Repo: $(System.DefaultWorkingDirectory)"
+
+    Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse -Filter "*.tf" |
+        Select-Object FullName
+  displayName: 'Check Terraform'
+
+- powershell: |
+    $ErrorActionPreference = "Stop"
+
+    $tf = "$(Agent.ToolsDirectory)\terraform\1.16.4\x64\terraform.exe"
+
+    Set-Location "$(System.DefaultWorkingDirectory)"
+
+    Write-Host "Current directory:"
+    Get-Location
+
+    & $tf init `
+      -backend-config="storage_account_name=stgdev2025" `
+      -backend-config="container_name=tfstate" `
+      -backend-config="key=preprod.tfstate" `
+      -backend-config="use_azuread_auth=true"
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Terraform init failed"
+    }
+  displayName: 'Terraform Init'

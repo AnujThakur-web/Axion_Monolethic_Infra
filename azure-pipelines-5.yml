@@ -1,0 +1,24 @@
+
+trigger:
+- feature/101
+
+pool:
+  micro-agent
+
+stages:
+  - stage: InintandValidate
+    jobs:
+      - job: Infra_setup
+        displayName: Terraform init and Validate
+        steps:
+        - task: TerraformTask@5
+          displayName: init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/envoroment/preprod'
+            backendServiceArm: 'Axion-SVC'
+            backendAzureRmStorageAccountName: 'infrastatestorage1407'
+            backendAzureRmContainerName: 'tfstate'
+            backendAzureRmKey: 'preprod_terraform.tfstate'
+        

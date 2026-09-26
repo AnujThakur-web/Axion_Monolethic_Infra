@@ -1,0 +1,61 @@
+trigger:
+- main
+
+pool:
+  name: micro-agent
+
+stages:
+
+- stage: Terraform
+  displayName: Terraform Init Validate Plan Apply
+
+  jobs:
+
+  - job: TerraformJob
+    displayName: Terraform
+
+    steps:
+
+    # Install Terraform
+    - task: TerraformInstaller@1
+      displayName: Install Terraform
+      inputs:
+        terraformVersion: '1.16.4'
+
+    # Terraform Init
+    - task: TerraformTask@5
+      displayName: Terraform Init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/Enviroment/Preproad'
+        backendServiceArm: 'axion-svc'
+        backendAzureRmStorageAccountName: 'stgdev2025'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'preprod.tfstate'
+
+    # Terraform Validate
+    - task: TerraformTask@5
+      displayName: Terraform Validate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/Enviroment/Preproad'
+
+    # Terraform Plan
+    - task: TerraformTask@5
+      displayName: Terraform Plan
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/Enviroment/Preproad'
+        environmentServiceNameAzureRM: 'axion-svc'
+
+    # Terraform Apply
+    - task: TerraformTask@5
+      displayName: Terraform Apply
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/Enviroment/Preproad'
+        environmentServiceNameAzureRM: 'axion-svc'
